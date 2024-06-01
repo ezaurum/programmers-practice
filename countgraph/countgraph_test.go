@@ -28,7 +28,7 @@ func dfs(node int, graph map[int][]int, visited map[int]bool) (int, int) {
 	return nodes, edges
 }
 
-// Main solution function
+// https://school.programmers.co.kr/learn/courses/30/lessons/258711
 func solution(edges [][]int) []int {
 	graph := make(map[int][]int)
 	indegree := make(map[int]int)

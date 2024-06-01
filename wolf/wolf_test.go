@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// https://school.programmers.co.kr/learn/courses/30/lessons/92343#
 func Solution(info []int, edges [][]int) int {
 	graph := make([][]int, len(info))
 	for _, edge := range edges {
