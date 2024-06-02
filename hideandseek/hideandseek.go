@@ -5,7 +5,6 @@ func Solution(n, k int) int {
 	type State struct {
 		pos, time int
 	}
-	minTime := 1 << 31
 	visited := make(map[int]bool)
 	queue := []State{{n, 0}}
 	for len(queue) > 0 {
@@ -29,5 +28,5 @@ func Solution(n, k int) int {
 		}
 
 	}
-	return minTime
+	return -1
 }
