@@ -15,3 +15,12 @@ func TestSolution(t *testing.T) {
 		t.Error("Expected 4, got ", r)
 	}
 }
+
+func TestSolution0(t *testing.T) {
+	var input [][]int
+	_ = json.Unmarshal([]byte(test), &input)
+	r := Solution2(4, input)
+	if r != 4 {
+		t.Error("Expected 4, got ", r)
+	}
+}
