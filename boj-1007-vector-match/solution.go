@@ -5,57 +5,42 @@ import (
 )
 
 func solution(n int, vectors [][]int) float64 {
+	// 합산해 놓고, 절반씩 나눠서 계산
+	totalSumX := 0
+	totalSumY := 0
+	for _, vector := range vectors {
+		totalSumX += vector[0]
+		totalSumY += vector[1]
+	}
 	minR := math.MaxFloat64
 	type state struct {
-		visited []bool
-		vectors [][]int
+		index    int
+		sumX     int
+		sumY     int
+		selected int
 	}
 
-	stack := []state{{visited: make([]bool, n), vectors: make([][]int, 0)}}
+	stack := []state{{}}
 	for len(stack) > 0 {
 		current := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
-		// 다 채웠을 때
-		if len(current.vectors) == n {
-			cv := current.vectors
-			i := 0
-			var vv [][]int
-			for i < n {
-				x0 := cv[i][0]
-				x1 := cv[i+1][0]
-				vv = append(vv, []int{x0 - x1, cv[i][1] - cv[i+1][1]})
-				i += 2
-			}
-			minR = math.Min(minR, checkLength(vv))
+		// 반 채웠을 때 - 나머지는 반대편에 넣어야 함
+		if current.selected == n/2 {
+			tx := totalSumX - current.sumX*2
+			ty := totalSumY - current.sumY*2
+			minR = math.Min(minR, math.Sqrt(float64(tx*tx+ty*ty)))
 			continue
 		}
-
-		// next
-		for i := 0; i < n; i++ {
-			visited := current.visited
-			if visited[i] {
-				continue
-			}
-			newVisited := make([]bool, n)
-			copy(newVisited, visited)
-			newVector := make([][]int, len(current.vectors))
-			copy(newVector, current.vectors)
-			ints := vectors[i]
-			newVisited[i] = true
-			newState := state{visited: newVisited, vectors: append(newVector, ints)}
-			stack = append(stack, newState)
+		if current.index == n {
+			continue
 		}
+		ints := vectors[current.index]
+
+		stack = append(stack,
+			state{index: current.index + 1, sumX: current.sumX + ints[0], sumY: current.sumY + ints[1], selected: current.selected + 1})
+		stack = append(stack,
+			state{index: current.index + 1, sumX: +current.sumX, sumY: current.sumY, selected: current.selected})
 	}
 
 	return minR
-}
-
-func checkLength(vectors [][]int) float64 {
-	sumX := 0
-	sumY := 0
-	for _, vector := range vectors {
-		sumX += vector[0]
-		sumY += vector[1]
-	}
-	return math.Sqrt(float64(sumX*sumX + sumY*sumY))
 }
