@@ -35,6 +35,6 @@ func main() {
 			second[i], _ = strconv.Atoi(parts[i])
 		}
 
-		fmt.Println(solution(n, w, first, second))
+		fmt.Println(solution(n, w, append(first, second...)))
 	}
 }
