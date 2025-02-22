@@ -11,6 +11,13 @@ func Solution(n int, m int, start int, edges [][]int) [][]string {
 		graph[a] = append(graph[a], b)
 		graph[b] = append(graph[b], a)
 	}
+	// 정방향으로 정렬해 둔다
+	for k, v := range graph {
+		sort.Slice(v, func(i, j int) bool {
+			return v[i] < v[j]
+		})
+		graph[k] = v
+	}
 
 	dfsResult := dfs(start, graph)
 	bfsResult := bfs(start, graph)
@@ -19,13 +26,6 @@ func Solution(n int, m int, start int, edges [][]int) [][]string {
 }
 
 func bfs(start int, graph map[int][]int) []string {
-	for k, v := range graph {
-		// bfs는 정방향 정렬
-		sort.Slice(v, func(i, j int) bool {
-			return v[i] < v[j]
-		})
-		graph[k] = v
-	}
 	queue := []int{start}
 	visited := make(map[int]bool)
 	var result []string
@@ -47,13 +47,6 @@ func bfs(start int, graph map[int][]int) []string {
 }
 
 func dfs(start int, graph map[int][]int) []string {
-	for k, v := range graph {
-		// dfs는 역순으로 정렬
-		sort.Slice(v, func(i, j int) bool {
-			return v[i] > v[j]
-		})
-		graph[k] = v
-	}
 	stack := []int{start}
 	visited := make(map[int]bool)
 	var result []string
@@ -64,7 +57,12 @@ func dfs(start int, graph map[int][]int) []string {
 			continue
 		}
 		visited[n] = true
-		for _, neighbor := range graph[n] {
+		neighbors := graph[n]
+		// 스택에 넣을 때는 처음 방문할 곳을 마지막에 넣어야 하므로 거꾸로 꺼낸다.
+		// => 이것도 pop하면 되겠다.
+		// => 이래서 재귀구나
+		for i := len(neighbors) - 1; i >= 0; i-- {
+			neighbor := neighbors[i]
 			if !visited[neighbor] {
 				stack = append(stack, neighbor)
 			}
