@@ -51,23 +51,25 @@ func dfs(start int, graph map[int][]int) []string {
 	visited := make(map[int]bool)
 	var result []string
 	for len(stack) > 0 {
-		n := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		if visited[n] {
-			continue
-		}
+		// pop 구현
+		last := len(stack) - 1
+		n := stack[last]
+		stack = stack[:last]
 		visited[n] = true
-		neighbors := graph[n]
-		// 스택에 넣을 때는 처음 방문할 곳을 마지막에 넣어야 하므로 거꾸로 꺼낸다.
-		// => 이것도 pop하면 되겠다.
-		// => 이래서 재귀구나
-		for i := len(neighbors) - 1; i >= 0; i-- {
-			neighbor := neighbors[i]
-			if !visited[neighbor] {
-				stack = append(stack, neighbor)
-			}
-		}
 		result = append(result, fmt.Sprint(n))
+
+		neighbors := append([]int{}, graph[n]...)
+		for len(neighbors) > 0 {
+			// pop
+			lastN := len(neighbors) -1
+			nn := neighbors[lastN]
+			neighbors = neighbors[:lastN]
+			if visited[nn] {
+				continue
+			}
+			stack = append(stack, nn)
+		}
 	}
 	return result
 }
+
