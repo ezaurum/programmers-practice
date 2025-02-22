@@ -55,6 +55,10 @@ func dfs(start int, graph map[int][]int) []string {
 		last := len(stack) - 1
 		n := stack[last]
 		stack = stack[:last]
+		// stack에 넣는 시점에는방문전이더라도 그 이후에 방문했을 수 있음
+		if visited[n] {
+			continue
+		}
 		visited[n] = true
 		result = append(result, fmt.Sprint(n))
 
