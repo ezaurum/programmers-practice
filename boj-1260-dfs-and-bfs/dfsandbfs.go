@@ -1,6 +1,7 @@
 package main
 
 import "fmt"
+import "sort"
 
 // Solution https://www.acmicpc.net/problem/1260
 func Solution(n int, m int, start int, edges [][]int) [][]string {
@@ -18,15 +19,11 @@ func Solution(n int, m int, start int, edges [][]int) [][]string {
 }
 
 func bfs(start int, graph map[int][]int) []string {
-	// bfs는 정렬
 	for k, v := range graph {
-		for i := 0; i < len(v)-1; i++ {
-			for j := i + 1; j < len(v); j++ {
-				if v[i] > v[j] {
-					v[i], v[j] = v[j], v[i]
-				}
-			}
-		}
+		// bfs는 정방향 정렬
+		sort.Slice(v, func(i, j int) bool {
+			return v[i] < v[j]
+		})
 		graph[k] = v
 	}
 	queue := []int{start}
@@ -35,29 +32,26 @@ func bfs(start int, graph map[int][]int) []string {
 	for len(queue) > 0 {
 		n := queue[0]
 		queue = queue[1:]
-		if !visited[n] {
-			visited[n] = true
-			for _, neighbor := range graph[n] {
-				if !visited[neighbor] {
-					queue = append(queue, neighbor)
-				}
-			}
-			result = append(result, fmt.Sprint(n))
+		if visited[n] {
+			continue
 		}
+		visited[n] = true
+		for _, neighbor := range graph[n] {
+			if !visited[neighbor] {
+				queue = append(queue, neighbor)
+			}
+		}
+		result = append(result, fmt.Sprint(n))
 	}
 	return result
 }
 
 func dfs(start int, graph map[int][]int) []string {
-	// dfs는 역순으로 정렬
 	for k, v := range graph {
-		for i := 0; i < len(v)-1; i++ {
-			for j := i + 1; j < len(v); j++ {
-				if v[i] < v[j] {
-					v[i], v[j] = v[j], v[i]
-				}
-			}
-		}
+		// dfs는 역순으로 정렬
+		sort.Slice(v, func(i, j int) bool {
+			return v[i] > v[j]
+		})
 		graph[k] = v
 	}
 	stack := []int{start}
@@ -66,15 +60,16 @@ func dfs(start int, graph map[int][]int) []string {
 	for len(stack) > 0 {
 		n := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
-		if !visited[n] {
-			visited[n] = true
-			for _, neighbor := range graph[n] {
-				if !visited[neighbor] {
-					stack = append(stack, neighbor)
-				}
-			}
-			result = append(result, fmt.Sprint(n))
+		if visited[n] {
+			continue
 		}
+		visited[n] = true
+		for _, neighbor := range graph[n] {
+			if !visited[neighbor] {
+				stack = append(stack, neighbor)
+			}
+		}
+		result = append(result, fmt.Sprint(n))
 	}
 	return result
 }
